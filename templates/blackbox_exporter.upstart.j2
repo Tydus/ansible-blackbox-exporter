@@ -1,0 +1,22 @@
+{{ ansible_managed | comment }}
+description "Blackbox Exporter"
+start on (local-filesystems and net-device-up IFACE!=lo)
+stop on runlevel [016]
+
+respawn
+respawn limit 10 5
+{% if blackbox_exporter_upstart_version | int >= 1.4 %}
+setuid {{ _blackbox_exporter_system_user }}
+setgid {{ _blackbox_exporter_system_group }}
+{% endif %}
+
+exec \
+{% if blackbox_exporter_upstart_version | int < 1.4 %}
+su -s /bin/sh -c 'exec "$0" "$@"' {{ _blackbox_exporter_system_user }} -- \
+{% endif %}
+{{ _blackbox_exporter_binary_install_dir }}/blackbox_exporter \
+-config.file=/etc/blackbox_exporter.yml \
+{% for flag, flag_value in blackbox_exporter_cli_flags.items() -%}
+--{{ flag }}={{ flag_value }} \
+{% endfor -%}
+--web.listen-address={{ blackbox_exporter_web_listen_address }}

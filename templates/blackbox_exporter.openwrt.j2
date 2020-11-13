@@ -1,0 +1,29 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2008-2014 OpenWrt.org
+{{ ansible_managed | comment }}
+
+START=90
+STOP=90
+
+USE_PROCD=1
+PROG={{ _blackbox_exporter_binary_install_dir }}/blackbox_exporter
+NAME=blackbox_exporter
+OPTIONS="--config.file=/etc/blackbox_exporter.yml \
+  {% for flag, flag_value in blackbox_exporter_cli_flags.items() -%}
+  --{{ flag }}={{ flag_value }} \
+  {% endfor -%}
+  --web.listen-address={{ blackbox_exporter_web_listen_address }}"
+
+start_service () {
+        [ "$2" = 0 ] || {
+                echo "validation failed"
+                return 1
+        }
+
+        [ "$enable" = "0" ] && return 1
+
+        procd_open_instance
+        procd_set_param command "$PROG"
+        procd_append_param command "$OPTIONS"
+        procd_close_instance
+}
