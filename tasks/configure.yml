@@ -1,11 +1,11 @@
 ---
-- name: create systemd service unit
+- name: create service unit
   template:
-    src: blackbox_exporter.service.j2
-    dest: /etc/systemd/system/blackbox_exporter.service
+    src: blackbox_exporter.{{ ansible_service_mgr | lower }}.j2
+    dest: "{{ lookup('vars', '_blackbox_exporter_' + ansible_service_mgr + '_service').file }}"
     owner: root
     group: root
-    mode: 0644
+    mode: "{{ lookup('vars', '_blackbox_exporter_' + ansible_service_mgr + '_service').mode }}"
   notify:
     - restart blackbox exporter
 

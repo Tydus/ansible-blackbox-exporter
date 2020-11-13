@@ -5,3 +5,16 @@ go_arch_map:
   aarch64: 'arm64'
   armv7l: 'armv7'
   armv6l: 'armv6'
+
+_blackbox_exporter_systemd_service:
+  file: "/etc/systemd/system/blackbox_exporter.service"
+  mode: "0644"
+_blackbox_exporter_sysvinit_service:
+  file: "/etc/init.d/blackbox_exporter"
+  mode: "0755"
+_blackbox_exporter_openwrt_init_service:
+  file: "/etc/init.d/blackbox_exporter"
+  mode: "0755"
+_blackbox_exporter_upstart_service:
+  file: "/etc/init/blackbox_exporter.conf"
+  mode: "0644"
