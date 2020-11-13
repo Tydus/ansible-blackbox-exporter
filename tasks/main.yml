@@ -17,10 +17,21 @@
 
 - name: ensure blackbox_exporter service is started and enabled
   become: true
+  service:
+    name: blackbox_exporter
+    state: started
+    enabled: true
+  when: ansible_service_mgr != 'systemd'
+  tags:
+    - blackbox_exporter_run
+
+- name: ensure blackbox_exporter service is started and enabled
+  become: true
   systemd:
     daemon_reload: true
     name: blackbox_exporter
     state: started
     enabled: true
+  when: ansible_service_mgr == 'systemd'
   tags:
     - blackbox_exporter_run
