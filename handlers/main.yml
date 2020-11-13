@@ -5,9 +5,29 @@
     daemon_reload: true
     name: blackbox_exporter
     state: restarted
+  listen: restart blackbox_exporter
+  when: ansible_service_mgr == 'systemd'
+
+- name: restart node_exporter service
+  become: true
+  service:
+    name: blackbox_exporter
+    state: restarted
+  listen: restart blackbox_exporter
+  when: ansible_service_mgr != 'systemd'
 
 - name: reload blackbox exporter
   become: true
   systemd:
     name: blackbox_exporter
     state: reloaded
+  listen: reload blackbox_exporter
+  when: ansible_service_mgr == 'systemd'
+
+- name: reload blackbox exporter
+  become: true
+  service:
+    name: blackbox_exporter
+    state: reloaded
+  listen: reload blackbox_exporter
+  when: ansible_service_mgr != 'systemd'
